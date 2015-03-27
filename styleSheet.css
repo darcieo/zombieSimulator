@@ -17,6 +17,11 @@ body {
     border: 5px solid black;
     border-radius:5px;
 }
+#messageDiv{
+    width:600px;
+    text-align:center;
+    margin-top: 250px;
+}
 #secondaryContent{
 	float:left;
     position:relative;
@@ -51,7 +56,12 @@ li {
 #instructions{
 	padding:15px 0;
 }
-#description{}
+#description{
+	padding:15px 0;
+}
+#description img{
+	width:128px;
+}
 
 /*-----------------buttons-----------------*/
 button {
@@ -131,4 +141,46 @@ input[type=button]:hover{
     border-color: #bb4fbb;
     background:#bb4fbb;
     color:white;
+}
+/*-----------------icons-----------------*/
+.character {
+    width: 100%;
+}
+#nurse {
+    margin-top: -5px;
+    position: relative;
+}
+#antidote {
+    font-size:14px;
+    font-weight:bold;
+    color:#7BBF6A;
+    text-align:right;
+    padding:0;
+    margin:0;
+    margin-top:-12px;
+}
+#health {
+    border: 2px solid #FFB334;
+    border-radius: 5px;
+    width:36px;
+    height:6px;
+    margin-top:-14px;
+}
+#h1 {
+    width:12px;
+    height:6px;
+    background:#fa2b74;
+    float:left;
+}
+#h2 {
+    width:12px;
+    height:6px;
+    background:#fa2b74;
+    float:left;
+}
+#h3 {
+    width:12px;
+    height:6px;
+    background:#fa2b74;
+    float:left;
 }

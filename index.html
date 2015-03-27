@@ -3,6 +3,7 @@
 <head>
 	<title>Zombie Simulator</title>
 	<link rel="stylesheet" type="text/css" href="styleSheet.css">
+	<script src="zombieSimulator.js"></script>
 </head>
 <body>
 	<div id="mainContent">
@@ -21,12 +22,345 @@
 		<h2 id="title">Zombie Simulator</h2>
 		<div id="instructions">Simulate a zombie apocalypse! Add characters by clicking the buttons on the bottom-left. Hover over buttons to see character descriptions. Click the start button to begin simulation!
 		</div>
-		<div id="description"></div>
 		<input onclick="startStop()" type="button" id="startStop" value="START" />
     	<div id="againButton" style="display:none;"><input onclick="location.reload()" type="button" id="gButton" value="Go Again!" /></div>
     	<div id="description"></div>
 		<div id="statistics"></div>
 	</div>
-	<script src="zombieSimulator.js"></script>
+
+<script>
+//stat variables
+var print = true;
+var done = false;
+var numZombie = 0;
+var numStudent = 0;
+var numNurse = 0;
+var numSoldier = 0;
+var turnedNurse = 0;
+var turnedSoldier = 0;
+var infected = 0;
+var healed = 0;
+var destroyed = 0;
+var totalTime = 0;
+var finalZombie = 0;
+var finalStudent = 0;
+var finalNurse = 0;
+var finalSoldier = 0;
+
+//elements
+var description = document.getElementById("description");
+var leftContainer = document.getElementById("leftContainer");
+var startStopButton = document.getElementById("startStop");
+var stats = document.getElementById("stats");
+var messageDiv = document.getElementById("messageDiv");
+var againButton = document.getElementById("againButton");
+var addButtons = document.getElementById("addButtons");
+var MILLISECONDS_PER_FRAME = 40;
+var characterArray = [];
+var zombieImage = '<img src="media/zombie.png"/>';
+var studentImage = "<img src='media/student.png'/>";
+var nurseImage = "<img src='media/nurse.png'/>";
+var officerImage ="<img src='media/soldier.png'/>";
+
+//descriptions
+var descrZombie = function () {
+    description.innerHTML = zombieImage + "<h2 style ='color:#fa2b74'>ZOMBIE</h2>Upon contact, zombies infect students, nurses who have run out of antidote, and soldiers who have exhausted their health. Infected characters turn into zombies immediately."
+}
+var descrStudent = function () {
+    description.innerHTML = studentImage + "<h2 style ='color:#60dbed'>STUDENT</h2>Upon contact with a zombie, students are infected and turned into zombies. If a student survives 5 seconds without being infected, the student will learn to fight or heal. The student will then turn into a soldier or a nurse."
+}
+var descrNurse = function () {
+    description.innerHTML = nurseImage + "<h2 style ='color:#7bcc4c'>NURSE</h2>Nurses start with 3 doses of antidote. Upon contact with a zombie, they will use one dose of antidote to turn the zombie back into its human form. If a nurse is out of antidote upon encounter with a zombie, the nurse will be infected and turned into a zombie."
+}
+var descrSoldier = function () {
+    description.innerHTML = officerImage + "<h2 style ='color:#FFB334'>OFFICER</h2>Soldiers destroy zombies upon contact. However, each encounter will lower their health. When a soldier's health is exhausted, they are susceptible to infection. When a soldier with no health encounters a zombie, the soldier is infected and turned into a zombie."
+}
+
+//character object
+function Character(id, originalID, startLeft, startTop, deltaX, deltaY, antidote, health, time, div) {
+    this.id = id;
+    this.originalID = originalID;
+    this.startLeft = startLeft;
+    this.startTop = startTop;
+    this.deltaX = deltaX;
+    this.deltaY = deltaY;
+    this.antidote = antidote;
+    this.health = health;
+    this.time = time;
+    this.div = div;
+}
+
+//create zombie
+function newZombie() {
+    var div = document.createElement("div");
+    var zombie = new Character(1, 1, getStartLeft(), getStartTop(), getDeltaX(), getDeltaY(), 0, 0, 0, div);
+    characterArray.push(zombie);
+    div.style.width = "40px";
+    div.style.height = "40px";
+    div.style.position = "absolute";
+    div.style.left = zombie.startLeft;
+    div.style.top = zombie.startTop;
+    div.innerHTML = '<img class ="character" id="zombie" src="media/zombie.png" />';
+    simulator.appendChild(div);
+    numZombie++;
+}
+
+//create student
+function newStudent() {
+    var div = document.createElement("div");
+    var student = new Character(2, 2, getStartLeft(), getStartTop(), getDeltaX(), getDeltaY(), 0, 0, 0, div);
+    characterArray.push(student);
+    div.style.width = "40px";
+    div.style.height = "40px";
+    div.style.position = "absolute";
+    div.style.left = student.startLeft;
+    div.style.top = student.startTop;
+    div.innerHTML = '<img class ="character" id="student" src="media/student.png" />';
+    simulator.appendChild(div);
+    numStudent++;
+}
+
+//create nurse
+function newNurse() {
+    var div = document.createElement("div");
+    var nurse = new Character(3, 3, getStartLeft(), getStartTop(), getDeltaX(), getDeltaY(), 3, 0, 0, div);
+    characterArray.push(nurse);
+    div.style.width = "40px";
+    div.style.height = "40px";
+    div.style.position = "absolute";
+    div.style.left = nurse.startLeft;
+    div.style.top = nurse.startTop;
+    div.innerHTML = '<div id="antidote">' + nurse.antidote + '</div> <img class ="character" id="nurse" src="media/nurse.png" />';
+    simulator.appendChild(div);
+    numNurse++;
+}
+
+//create soldier
+function newSoldier() {
+    var div = document.createElement("div");
+    var soldier = new Character(4, 4, getStartLeft(), getStartTop(), getDeltaX(), getDeltaY(), 0, 3, 0, div);
+    characterArray.push(soldier);
+    div.style.width = "40px";
+    div.style.height = "40px";
+    div.style.position = "absolute";
+    div.style.left = soldier.startLeft;
+    div.style.top = soldier.startTop;
+    div.innerHTML = '<div id="health"><div id="h1"></div><div id="h2"></div><div id="h3"></div></div><img class ="character" id="soldier" src="media/soldier.png" />';
+    simulator.appendChild(div);
+    numSoldier++;
+}
+
+//clear characters
+function clearAll() {
+    for (var i = characterArray.length - 1; i >= 0; i--) {
+        simulator.removeChild(characterArray[i].div);
+    }
+    var numZombie = 0;
+    var numStudent = 0;
+    var numNurse = 0;
+    var numSoldier = 0;
+    var turnedNurse = 0;
+    var turnedSoldier = 0;
+    var infected = 0;
+    var healed = 0;
+    var destroyed = 0;
+    var totalTime = 0;
+    messageDiv.innerHTML = "";
+    if (startStopButton.value == "STOP"){
+    	clearInterval(timer);
+        startStopButton.value = "START";
+    }
+}
+
+//x-component of slope
+var getDeltaX = function () {
+    var deltaX = Math.floor((Math.random() * 5) + 2);
+    var dirX = Math.floor((Math.random() * 2) + 0);
+    if (dirX == 0) {
+        deltaX = -deltaX;
+    }
+    return deltaX;
+}
+//y component of slope
+var getDeltaY = function () {
+    var deltaY = Math.floor((Math.random() * 5) + 2);
+    var dirY = Math.floor((Math.random() * 2) + 0);
+    if (dirY == 0) {
+        deltaY = -deltaY;
+    }
+    return deltaY;
+}
+
+//left start position
+var getStartLeft = function () {
+    var startLeft = Math.floor((Math.random() * 550) + 1);
+    startLeft = String(startLeft) + "px";
+    return startLeft;
+}
+
+//top start position
+var getStartTop = function () {
+    var startTop = Math.floor((Math.random() * 550) + 1);
+    startTop = String(startTop) + "px";
+    return startTop;
+ }
+
+//start-stop movement //reference code here
+function startStop() {
+    if (startStopButton.value == "START") {
+        timer = setInterval(move, 40);
+        startStopButton.value = "STOP"
+    } else {
+        clearInterval(timer);
+        startStopButton.value = "START";
+    }
+}
+
+//move function
+var move = function (){
+
+    for (var i = 0; i < characterArray.length; i++) {
+        var character = characterArray[i].div;
+        var deltaX = characterArray[i].deltaX
+        var deltaY = characterArray[i].deltaY
+        
+        var x = parseInt(character.style.left) + deltaX;
+        if (x < 0 || x > 560) {
+            characterArray[i].deltaX = -deltaX;
+        }
+        else {
+            character.style.left = x + "px";
+        }
+    
+        var y = parseInt(character.style.top) + deltaY;
+        if (y < 0 || y > 560) {
+            characterArray[i].deltaY = -deltaY;
+        }
+        else {
+            character.style.top = y + "px";
+        }
+    }  
+};
+
+//check if done
+var checkDone = function () {
+    var allZombie = true;
+    var noZombie = true;
+    while (allZombie == true) {
+        for (var i = 0; i < characterArray.length; i++) {
+            if (characterArray[i].id == 1 | characterArray[i].id == 5) {
+                allZombie = true;
+            }
+            else {
+                allZombie = false;
+                while (noZombie == true) {
+                    for (var i = 0; i < characterArray.length; i++) {
+                        if (characterArray[i].id != 1) {
+                            noZombie = true;
+                        } else {
+                            noZombie = false;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                break;
+            }
+        }
+        break;
+    }
+    if (allZombie == true) {
+    	messageDiv.style.color = "#fa2b74";
+    	messageDiv.innerHTML = '<h2 style="font-size:50px;">Zombies win!</h2>'
+    	printStats();
+		done = true;
+    }
+    else if (noZombie == true) { 
+    	messageDiv.style.color = "#7bcc4c";
+    	messageDiv.innerHTML = '<h2 style="font-size:50px;">Humans win!</h2>'
+    	printStats();
+		done = true;
+     }
+}
+
+//statistics
+function finals() {
+    var removeThis = [];
+    var counter = 0;
+    for (var i = 0; i < characterArray.length; i++) {
+        switch (characterArray[i].id) {
+            case 1:
+                finalZombie++;
+                break;
+            case 2:
+                finalStudent++;
+                break;
+            case 3:
+                finalNurse++;
+                break;
+            case 4:
+                finalSoldier++;
+                break;
+            default:
+                removeThis.push(i);
+        }
+    }
+    for (var r = 0; r < removeThis.length; r++) {
+        var rValue = removeThis[r]
+        rValue += counter;
+        counter--;
+        characterArray.splice(rValue, 1);
+    }
+}
+
+    //print final statistics
+    function printStats() {
+    buttons.style.display = "none";
+    description.style.display = "none";
+    startStopButton.style.display = "none"
+    againButton.style.display = "block";
+    statistics.innerHTML = '<h2>Stats</h2><ul id="statList"></ul>'
+    var statList = document.getElementById("statList")
+
+    finals();
+
+    var listItem = document.createElement("LI");
+    ListItem.innerHTML = 'Started with: ' + numZombie + ' <img style="width:20px" src="media/zombie.png" />' + numStudent + ' <img style="width:20px" src="mdeia/student.png" /> ' + numNurse + ' <img style="width:20px"syle="width:20px" src="media/nurse.png" /> ' + numSoldier + ' <img style="width:20px" src="media/soldier.png" />';
+        statList.appendChild(listItem);
+
+    var listItem = document.createElement("LI");
+    listItem.innerHTML = "Time elapsed: " + totalTime.toFixed(0) + " seconds";
+    statList.appendChild(listItem);
+
+    var listItem = document.createElement("LI");
+    listItem.innerHTML = "Characters infected: " + infected;
+    statList.appendChild(listItem);
+
+    var listItem = document.createElement("LI");
+    listItem.innerHTML = "Zombies healed: " + healed;
+    statList.appendChild(listItem);
+
+    var listItem = document.createElement("LI");
+    listItem.innerHTML = "Zombies destroyed: " + destroyed;
+    statList.appendChild(listItem);
+
+    var listItem = document.createElement("LI");
+    listItem.innerHTML = "Students turned to Nurses: " + turnedNurse;
+    statList.appendChild(listItem);
+
+    var listItem = document.createElement("LI");
+    listItem.innerHTML = "Students turned to Soldiers: " + turnedSoldier;
+    statList.appendChild(listItem);
+
+    var listItem = document.createElement("LI");
+    listItem.innerHTML = 'Ended with: ' + finalZombie + ' <img style="width:20px" src="media/zombie.png" />' + finalStudent + ' <img style="width:20px" src="media/student.png" /> ' + finalNurse + ' <img style="width:20px"syle="width:20px" src="media/nurse.png" /> ' + finalSoldier + ' <img style="width:20px" src="media/soldier.png" />';
+        statList.appendChild(listItem);
+    }
+
+    
+
+
+</script>
+	
 </body>
 </html>
