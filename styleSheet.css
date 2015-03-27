@@ -1,4 +1,3 @@
-/*-----------------Zombie Simulator CSS-----------------*/
 @font-face {
   font-family: 'MyFont';
   src: url('troika.otf') format('opentype');
@@ -6,6 +5,7 @@
 body {
     font-family:sans-serif;
 }
+/*-----------------main layot-----------------*/
 #mainContent{
 	float:left;
     width:610px;
