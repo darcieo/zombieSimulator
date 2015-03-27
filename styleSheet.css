@@ -1,0 +1,44 @@
+@font-face {
+  font-family: 'MyFont';
+  src: url('troika.otf') format('opentype');
+}
+body {
+    font-family:Verdana;
+}
+#mainContent{
+	float:left;
+    width:610px;
+    background:blue;
+}
+#simulator{
+	width:600px;
+    height:600px;
+    position: relative;
+    border: 5px solid black;
+    border-radius:5px;
+}
+#buttons{}
+#secondaryContent{
+	float:left;
+    width:400px;
+    height:610px;
+    position:relative;
+    text-align: center;
+    padding:0px 20px;
+    position:relative;
+    background:red;
+}
+#title{
+	color:#bb4fbb;
+    padding-top:5px;
+    font-size:40px;
+}
+h2{
+    font-family: MyWebFont2;
+    font-weight: normal;
+    font-size:35px;
+    margin:0px;
+    padding:0px;
+}
+#instructions{}
+#description{}
