@@ -93,7 +93,7 @@ function Character(id, originalID, startLeft, startTop, deltaX, deltaY, antidote
 //create zombie
 function newZombie() {
     var div = document.createElement("div");
-    var zombie = new Character(1, 1, getStartLeft(), getStartTop(), getDeltaX(), getDeltaY(), 0, 0, 0, div);
+    var zombie = new Character(1, 2, getStartLeft(), getStartTop(), getDeltaX(), getDeltaY(), 0, 0, 0, div);
     characterArray.push(zombie);
     div.style.width = "40px";
     div.style.height = "40px";
@@ -219,6 +219,10 @@ function startStop() {
 //move function
 var move = function (){
 
+    infect();
+    heal();
+    destroy();
+    grow();
     for (var i = 0; i < characterArray.length; i++) {
         var character = characterArray[i].div;
         var deltaX = characterArray[i].deltaX
@@ -242,120 +246,153 @@ var move = function (){
     }  
 };
 
-//check if done
-var checkDone = function () {
-    var allZombie = true;
-    var noZombie = true;
-    while (allZombie == true) {
-        for (var i = 0; i < characterArray.length; i++) {
-            if (characterArray[i].id == 1 | characterArray[i].id == 5) {
-                allZombie = true;
+//zombie-student-collision
+var infect = function () {
+    for (var i = 0; i < characterArray.length; i++) {
+        if (characterArray[i].id == 1) {
+            var character = characterArray[i].div;
+            var x = parseInt(character.style.left)
+            var y = parseInt(character.style.top)
+
+            for (var j = 0; j < characterArray.length; j++) {
+                if (characterArray[j].id == 2) {
+                    var character2 = characterArray[j].div;
+                    var x2 = parseInt(character2.style.left)
+                    var y2 = parseInt(character2.style.top)
+
+                    if (x <= x2 & x2 <= (x + 40) & y <= y2 & y2 <= (y + 40) |
+                        x2 <= x & x <= (x2 + 40) & y2 <= y & y <= (y2 + 40)) {
+                        character2.innerHTML = '<img class ="character" id="zombie" src="media/zombie.png" />';
+                        characterArray[j].id = 1;
+                        infected++;
+                    }
+                }
             }
-            else {
-                allZombie = false;
-                while (noZombie == true) {
-                    for (var i = 0; i < characterArray.length; i++) {
-                        if (characterArray[i].id != 1) {
-                            noZombie = true;
-                        } else {
-                            noZombie = false;
-                            break;
+        }
+    }
+}
+
+//zombie-nurse-collision   
+var heal = function () {
+    for (var i = 0; i < characterArray.length; i++) {
+        if (characterArray[i].id == 1) {
+            var character = characterArray[i].div;
+            var x = parseInt(character.style.left)
+            var y = parseInt(character.style.top)
+
+            for (var j = 0; j < characterArray.length; j++) {
+                if (characterArray[j].id == 3) {
+                    var character2 = characterArray[j].div;
+                    var x2 = parseInt(character2.style.left)
+                    var y2 = parseInt(character2.style.top)
+
+                    if (x <= x2 & x2 <= (x + 40) & y <= y2 & y2 <= (y + 40) |
+                        x2 <= x & x <= (x2 + 40) & y2 <= y & y <= (y2 + 40)) {
+                        if (characterArray[j].antidote != 0) {;
+                            characterArray[i].id = characterArray[i].originalID;
+                            
+                            switch (characterArray[i].id){
+                            case 4:
+                                character.innerHTML = '<div id="health"><div id="h1"></div><div id="h2"></div><div id="h3"></div></div><img class ="character" id="soldier" src="media/soldier.png" />';
+                                    characterArray[i].health = 3;
+                                    break;
+                            case 3:
+                                character.innerHTML = '<div id="antidote">' + characterArray[i].antidote + '</div> <img class ="character" id="nurse" src="media/nurse.png" />';
+                                characterArray[i].antidote = 3;
+                                    break;
+                            default:
+                                character.innerHTML = '<img class ="character" id="student" src="media/student.png" />'
+                            }   
+                            character2.innerHTML = '<div id="antidote">' + --characterArray[j].antidote + '</div> <img class ="character" id="nurse" src="media/nurse.png" />';
+                             healed++;
+                        }
+                        else {
+                            character2.innerHTML = '<img class ="character" id="zombie" src="media/zombie.png" />';
+                            characterArray[j].id = 1;
+                            infected++;
                         }
                     }
-                    break;
                 }
-                break;
             }
         }
-        break;
     }
-    if (allZombie == true) {
-    	messageDiv.style.color = "#fa2b74";
-    	messageDiv.innerHTML = '<h2 style="font-size:50px;">Zombies win!</h2>'
-    	printStats();
-		done = true;
-    }
-    else if (noZombie == true) { 
-    	messageDiv.style.color = "#7bcc4c";
-    	messageDiv.innerHTML = '<h2 style="font-size:50px;">Humans win!</h2>'
-    	printStats();
-		done = true;
-     }
 }
 
-//statistics
-function finals() {
-    var removeThis = [];
-    var counter = 0;
+//zombie-soldier-collision  
+var destroy = function () {
     for (var i = 0; i < characterArray.length; i++) {
-        switch (characterArray[i].id) {
-            case 1:
-                finalZombie++;
-                break;
-            case 2:
-                finalStudent++;
-                break;
-            case 3:
-                finalNurse++;
-                break;
-            case 4:
-                finalSoldier++;
-                break;
-            default:
-                removeThis.push(i);
+        if (characterArray[i].id == 1) {
+            var character = characterArray[i].div;
+            var x = parseInt(character.style.left)
+            var y = parseInt(character.style.top)
+
+            for (var j = 0; j < characterArray.length; j++) {
+                if (characterArray[j].id == 4) {
+                    var character2 = characterArray[j].div;
+                    var x2 = parseInt(character2.style.left)
+                    var y2 = parseInt(character2.style.top)
+
+                    if (x <= x2 & x2 <= (x + 40) & y <= y2 & y2 <= (y + 40) |
+                        x2 <= x & x <= (x2 + 40) & y2 <= y & y <= (y2 + 40)) {
+                        if (characterArray[j].health != 0) {
+                            character.style.display = "none";
+                            characterArray[i].id = 5;
+                            destroyed++;
+
+                            switch (characterArray[j].health){
+                            case 3:
+                                character2.innerHTML = '<div id="health"><div id="h1"></div><div id="h2"></div></div><img class ="character" id="soldier" src="media/soldier.png" />';
+                                characterArray[j].health--;
+                                break;
+                            case 2:
+                                character2.innerHTML = '<div id="health"><div id="h1"></div></div><img class ="character" id="soldier" src="media/soldier.png" />';
+                                characterArray[j].health--;
+                                break;
+                            default:
+                                character2.innerHTML = '<div id="health"></div><img class ="character" id="soldier" src="media/soldier.png" />';
+                                characterArray[j].health--;
+                            }
+                        }
+                        else {
+                            character2.innerHTML = '<img class ="character" id="zombie" src="media/zombie.png" />';
+                            characterArray[j].id = 1;
+                            infected++;
+                        }
+                    }
+                }
+            }
         }
     }
-    for (var r = 0; r < removeThis.length; r++) {
-        var rValue = removeThis[r]
-        rValue += counter;
-        counter--;
-        characterArray.splice(rValue, 1);
+}
+
+//student-grow
+var grow = function () {
+    for (var i = 0; i < characterArray.length; i++) {
+        if (characterArray[i].id == 2) {
+            var character = characterArray[i].div;
+            characterArray[i].time += 0.04;
+            if (characterArray[i].time > 5){
+                var random = Math.floor((Math.random() * 2) + 0);
+                if (random == 0) {
+                    characterArray[i].id = 3;
+                    characterArray[i].originalID = 3;
+                    characterArray[i].antidote = 3;
+                    characterArray[i].time = 0;
+                    character.innerHTML = '<div id="antidote">' + characterArray[i].antidote + '</div> <img class ="character" id="nurse" src="media/nurse.png" />';
+                    turnedNurse++;
+                }
+                else {characterArray[i].id = 4;
+                    characterArray[i].originalID = 4;
+                    characterArray[i].health = 3;
+                    characterArray[i].time = 0;
+                    character.innerHTML = '<div id="health"><div id="h1"></div><div id="h2"></div><div id="h3"></div></div><img class ="character" id="soldier" src="media/soldier.png" />';
+                    turnedSoldier++;
+                }
+            }
+        }
     }
 }
 
-    //print final statistics
-    function printStats() {
-    buttons.style.display = "none";
-    description.style.display = "none";
-    startStopButton.style.display = "none"
-    againButton.style.display = "block";
-    statistics.innerHTML = '<h2>Stats</h2><ul id="statList"></ul>'
-    var statList = document.getElementById("statList")
-
-    finals();
-
-    var listItem = document.createElement("LI");
-    ListItem.innerHTML = 'Started with: ' + numZombie + ' <img style="width:20px" src="media/zombie.png" />' + numStudent + ' <img style="width:20px" src="mdeia/student.png" /> ' + numNurse + ' <img style="width:20px"syle="width:20px" src="media/nurse.png" /> ' + numSoldier + ' <img style="width:20px" src="media/soldier.png" />';
-        statList.appendChild(listItem);
-
-    var listItem = document.createElement("LI");
-    listItem.innerHTML = "Time elapsed: " + totalTime.toFixed(0) + " seconds";
-    statList.appendChild(listItem);
-
-    var listItem = document.createElement("LI");
-    listItem.innerHTML = "Characters infected: " + infected;
-    statList.appendChild(listItem);
-
-    var listItem = document.createElement("LI");
-    listItem.innerHTML = "Zombies healed: " + healed;
-    statList.appendChild(listItem);
-
-    var listItem = document.createElement("LI");
-    listItem.innerHTML = "Zombies destroyed: " + destroyed;
-    statList.appendChild(listItem);
-
-    var listItem = document.createElement("LI");
-    listItem.innerHTML = "Students turned to Nurses: " + turnedNurse;
-    statList.appendChild(listItem);
-
-    var listItem = document.createElement("LI");
-    listItem.innerHTML = "Students turned to Soldiers: " + turnedSoldier;
-    statList.appendChild(listItem);
-
-    var listItem = document.createElement("LI");
-    listItem.innerHTML = 'Ended with: ' + finalZombie + ' <img style="width:20px" src="media/zombie.png" />' + finalStudent + ' <img style="width:20px" src="media/student.png" /> ' + finalNurse + ' <img style="width:20px"syle="width:20px" src="media/nurse.png" /> ' + finalSoldier + ' <img style="width:20px" src="media/soldier.png" />';
-        statList.appendChild(listItem);
-    }
 
     
 
