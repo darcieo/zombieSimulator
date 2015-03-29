@@ -23,26 +23,6 @@ body {
     text-align:center;
     margin-top: 250px;
 }
-#gitLink{
-
-}
-#github{
-    width:25px;
-    position:absolute;
-}
-a{
-    color:#bb4fbb;
-    text-decoration: none;
-    font-size:14px;
-    position:absolute;
-    left:45px;
-    top:585px;
-}
-a:hover{
-    text-decoration: underline;
-
-}
-
 #secondaryContent{
     float:left;
     position:relative;
