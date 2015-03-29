@@ -4,21 +4,22 @@
 }
 body {
     font-family:sans-serif;
+    padding:10px;
 }
 /*-----------------main layot-----------------*/
 #mainContent{
     float:left;
-    width:610px;
+    width:560px;
 }
 #simulator{
     position: relative;
-    width:600px;
-    height:600px;
+    width:550px;
+    height:550px;
     border: 5px solid black;
     border-radius:5px;
 }
 #messageDiv{
-    width:600px;
+    width:550px;
     text-align:center;
     margin-top: 250px;
 }
@@ -26,7 +27,7 @@ body {
     float:left;
     position:relative;
     width:400px;
-    height:610px;
+    height:560px;
     text-align: center;
     padding:0px 20px;
 }
@@ -60,7 +61,7 @@ li {
     padding:15px 0;
 }
 #description img{
-    width:128px;
+    width:80px;
 }
 
 /*-----------------buttons-----------------*/
@@ -69,14 +70,14 @@ button {
     border-radius: 5px;
     background:white;
     font-weight:500;
-    margin-right:6px;
     cursor:pointer;
     font-family:Verdana;
     font-size:16px;
+    width:150px;
+    margin:2px;
 }
 #buttons{
-    clear:both;
-    padding-top:10px;
+    padding-top:10px 0px;
 }
 #zombieButton{
     border: 1px solid #fa2b74;
