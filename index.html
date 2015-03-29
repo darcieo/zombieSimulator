@@ -10,6 +10,9 @@
         <div id="simulator">
             <div id="messageDiv"></div>
         </div>
+        <img id="github"src="media/github.png"/>
+            <a href="https://github.com/darcieo/ZombieSimulator">
+            View Code</a>
     </div>
     <div id="secondaryContent">
         <h2 id="title">Zombie Simulator</h2>
@@ -153,7 +156,8 @@
         div.style.height = "40px";
         div.style.position = "absolute";
         div.style.left = officer.startLeft;
-        div.style.top = officer.startTop;
+        var startOfficer = parseInt(officer.startTop) + 10;
+        div.style.top = startOfficer + "px";
         div.innerHTML = '<div id="healthBar"><div id="health1"></div><div id="health2"></div><div id="health3"></div></div><img class ="character" id="officer" src="media/officer.png" />';
         simulator.appendChild(div);
         numofficer++;
