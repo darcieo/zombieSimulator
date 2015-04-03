@@ -1,3 +1,34 @@
+jQuery(function($){
+    $(document).ready(function(){
+
+        /*hover for descriptions*/
+        $('#zombieButton').hover(function(){
+            $('#zombieDescr').addClass('up');
+        }, function(){
+            $('#zombieDescr').removeClass('up');
+        });
+
+        $('#studentButton').hover(function(){
+            $('#studentDescr').addClass('up');
+        }, function(){
+            $('#studentDescr').removeClass('up');
+        });
+
+        $('#nurseButton').hover(function(){
+            $('#nurseDescr').addClass('up');
+        }, function(){
+            $('#nurseDescr').removeClass('up');
+        });
+
+        $('#officerButton').hover(function(){
+            $('#officerDescr').addClass('up');
+        }, function(){
+            $('#officerDescr').removeClass('up');
+        });
+
+    }); 
+})
+
 //variables
 var print = true;
 var done = false;
@@ -20,8 +51,8 @@ var finalofficer = 0;
 var simulator = document.getElementById("simulator");
 var messageDiv = document.getElementById("messageDiv");
 var startStopButton = document.getElementById("startStop");
+var againButton = document.getElementById("againButton");
 var description = document.getElementById("description");
-var againDiv = document.getElementById("againDiv");
 var statistics = document.getElementById("statistics");
 var buttons = document.getElementById("buttons");
 var zombieImage = '<img src="media/zombie.png"/>';
@@ -31,23 +62,7 @@ var officerImage = "<img src='media/officer.png'/>";
 var MILLISECONDS_PER_FRAME = 40;
 var characterArray = [];
 
-//descriptions
-var descrZombie = function () {
-    description.innerHTML = zombieImage + "<h2 style ='color:#fa2b74'>ZOMBIE</h2>Upon contact, zombies infect students, nurses who have run out of antidote, and officers who have exhausted their health. Infected characters turn into zombies immediately."
-}
-var descrStudent = function () {
-    description.innerHTML = studentImage + "<h2 style ='color:#60dbed'>STUDENT</h2>Upon contact with a zombie, students are infected and turned into zombies. If a student survives 5 seconds without being infected, the student will learn to fight or heal. The student will then turn into an officer or a nurse."
-}
-var descrNurse = function () {
-    description.innerHTML = nurseImage + "<h2 style ='color:#7bcc4c'>NURSE</h2>Nurses start with 3 doses of antidote. Upon contact with a zombie, they will use one dose of antidote to turn the zombie back into its human form. If a nurse is out of antidote upon encounter with a zombie, the nurse will be infected and turned into a zombie."
-}
-var descrOfficer = function () {
-    description.innerHTML = officerImage + "<h2 style ='color:#FFB334'>POLICE OFFICER</h2>Officers destroy zombies upon contact. However, each encounter will lower their health. When an officer's health is exhausted, they are susceptible to infection. When an officer with no health encounters a zombie, the officer is infected and turned into a zombie."
-}
 
-var descrClear = function () {
-    description.innerHTML = "";
-}
 
 //character object
 function Character(id, originalID, startLeft, startTop, deltaX, deltaY, antidote, health, time, div) {
@@ -188,7 +203,7 @@ var getStartTop = function () {
 //start-stop movement //reference code here
 function startStop() {
     if (characterArray.length == 0) {
-        messageDiv.innerHTML = '<h2 style="font-size:50px;">Add characters!</h2>';
+        messageDiv.innerHTML = "Add characters!";
         messageDiv.style.color = "#60dbed";
     }
     else {
@@ -285,8 +300,8 @@ var move = function () {
 function printStats() {
     buttons.style.display = "none";
     description.style.display = "none";
+    againButton.style.display = "inline";
     startStopButton.style.display = "none"
-    againDiv.style.display = "block";
     statistics.innerHTML = '<h2>Stats</h2><ul id="statList"></ul>'
     var statList = document.getElementById("statList")
 
@@ -308,7 +323,7 @@ function printStats() {
     }
 
     var listItem = document.createElement("LI");
-    listItem.innerHTML = 'Started with: ' + numZombie + ' <img style="width:20px" src="media/zombie.png" />' + numStudent + ' <img style="width:20px" src="media/student.png" /> ' + numNurse + ' <img style="width:20px"syle="width:20px" src="media/nurse.png" /> ' + numofficer + ' <img style="width:20px" src="media/officer.png" />';
+    listItem.innerHTML = 'Started with: ' + numZombie + ' <img src="media/zombie.png" />' + numStudent + ' <img src="media/student.png" /> ' + numNurse + ' <img src="media/nurse.png" /> ' + numofficer + ' <img src="media/officer.png" />';
     statList.appendChild(listItem);
 
     var listItem = document.createElement("LI");
@@ -336,7 +351,7 @@ function printStats() {
     statList.appendChild(listItem);
 
     var listItem = document.createElement("LI");
-    listItem.innerHTML = 'Ended with: ' + finalZombie + ' <img style="width:20px" src="media/zombie.png" />' + finalStudent + ' <img style="width:20px" src="media/student.png" /> ' + finalNurse + ' <img style="width:20px"syle="width:20px" src="media/nurse.png" /> ' + finalofficer + ' <img style="width:20px" src="media/officer.png" />';
+    listItem.innerHTML = 'Ended with: ' + finalZombie + ' <img src="media/zombie.png" />' + finalStudent + ' <img src="media/student.png" /> ' + finalNurse + ' <img src="media/nurse.png" /> ' + finalofficer + ' <img src="media/officer.png" />';
     statList.appendChild(listItem);
 }
 
